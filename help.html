@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Translator - Help & Tutorial</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    .header {
+      text-align: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section h2 {
+      color: #667eea;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .step {
+      background: #f8f9fa;
+      padding: 15px;
+      border-left: 4px solid #667eea;
+      margin-bottom: 15px;
+    }
+
+    .step h4 {
+      margin: 0 0 10px 0;
+      color: #4a5568;
+    }
+
+    .platforms {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .platform {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid #e2e8f0;
+    }
+
+    .platform.supported {
+      border-color: #48bb78;
+      background: #f0fff4;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .feature {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .feature h4 {
+      margin: 0 0 10px 0;
+      color: #4a5568;
+    }
+
+    .troubleshooting {
+      background: #fef5e7;
+      border: 2px solid #f6ad55;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .troubleshooting h4 {
+      color: #c05621;
+      margin: 0 0 15px 0;
+    }
+
+    code {
+      background: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Consolas', monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>🎤 Meeting Translator</h1>
+    <p>Real-time meeting transcription made easy</p>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <h2>🚀 Quick Start Guide</h2>
+
+      <div class="step">
+        <h4>Step 1: Join a Meeting</h4>
+        <p>Navigate to a supported meeting platform (Google Meet, Zoom, or Microsoft Teams) and join a meeting.</p>
+      </div>
+
+      <div class="step">
+        <h4>Step 2: Open the Extension</h4>
+        <p>Click the Meeting Translator extension icon in your browser toolbar to open the control popup.</p>
+      </div>
+
+      <div class="step">
+        <h4>Step 3: Start Recording</h4>
+        <p>Click the "Start Recording" button to begin real-time transcription. The extension will automatically detect
+          the meeting video and start processing audio.</p>
+      </div>
+
+      <div class="step">
+        <h4>Step 4: View Transcripts</h4>
+        <p>Click "Show Interface" to see the live transcript overlay. You can drag and resize it as needed.</p>
+      </div>
+
+      <div class="step">
+        <h4>Step 5: Export Results</h4>
+        <p>When finished, use the "Export" button to save your transcripts to a file.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🌐 Supported Platforms</h2>
+      <div class="platforms">
+        <div class="platform supported">
+          <h4>📹 Google Meet</h4>
+          <p>Fully supported with automatic video detection</p>
+        </div>
+        <div class="platform supported">
+          <h4>🎥 Zoom</h4>
+          <p>Works with browser-based Zoom meetings</p>
+        </div>
+        <div class="platform supported">
+          <h4>👥 Microsoft Teams</h4>
+          <p>Compatible with Teams web interface</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>✨ Key Features</h2>
+      <div class="features">
+        <div class="feature">
+          <h4>🎯 Real-time Transcription</h4>
+          <p>Live speech-to-text conversion as people speak</p>
+        </div>
+        <div class="feature">
+          <h4>🎨 Customizable Interface</h4>
+          <p>Draggable, resizable overlay with theme options</p>
+        </div>
+        <div class="feature">
+          <h4>📊 Audio Quality Detection</h4>
+          <p>Automatic audio source optimization</p>
+        </div>
+        <div class="feature">
+          <h4>💾 Export Options</h4>
+          <p>Save transcripts in multiple formats</p>
+        </div>
+        <div class="feature">
+          <h4>🌍 Multi-language Support</h4>
+          <p>Supports multiple speech recognition languages</p>
+        </div>
+        <div class="feature">
+          <h4>⚙️ Advanced Settings</h4>
+          <p>Fine-tune audio processing and UI preferences</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🎛️ Interface Components</h2>
+
+      <div class="feature">
+        <h4>Control Panel</h4>
+        <p>The main floating interface that lets you start/stop recording, access settings, and export transcripts. You
+          can drag it anywhere on the screen.</p>
+      </div>
+
+      <div class="feature">
+        <h4>Transcript Overlay</h4>
+        <p>Shows live transcription results in real-time. Displays both interim (preliminary) and final results with
+          confidence indicators.</p>
+      </div>
+
+      <div class="feature">
+        <h4>Settings Panel</h4>
+        <p>Comprehensive configuration options for audio quality, speech recognition language, UI appearance, and
+          platform-specific settings.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>⚙️ Settings & Configuration</h2>
+
+      <div class="feature">
+        <h4>Audio Settings</h4>
+        <p>Configure audio processing quality, latency preferences, and noise reduction settings for optimal
+          transcription accuracy.</p>
+      </div>
+
+      <div class="feature">
+        <h4>Speech Recognition</h4>
+        <p>Choose your preferred language, adjust confidence thresholds, and enable continuous recognition for best
+          results.</p>
+      </div>
+
+      <div class="feature">
+        <h4>UI Customization</h4>
+        <p>Select themes (Light/Dark/Transparent), adjust overlay positioning, and customize the appearance to your
+          preferences.</p>
+      </div>
+    </div>
+
+    <div class="troubleshooting">
+      <h4>🔧 Troubleshooting</h4>
+      <p><strong>Extension not working?</strong></p>
+      <ul>
+        <li>Make sure you're on a supported meeting platform</li>
+        <li>Check that microphone permissions are granted</li>
+        <li>Refresh the page and try again</li>
+        <li>Ensure Chrome is up to date</li>
+      </ul>
+
+      <p><strong>No audio detected?</strong></p>
+      <ul>
+        <li>Verify that the meeting has active audio/video</li>
+        <li>Check browser audio permissions</li>
+        <li>Try adjusting audio quality settings</li>
+      </ul>
+
+      <p><strong>Poor transcription quality?</strong></p>
+      <ul>
+        <li>Ensure good audio quality in the meeting</li>
+        <li>Check speech recognition language settings</li>
+        <li>Adjust confidence threshold in settings</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>🔐 Privacy & Security</h2>
+      <p>Meeting Translator processes audio locally in your browser using the Web Speech API. No audio data is sent to
+        external servers. Transcripts are stored locally and can be exported or cleared at any time.</p>
+    </div>
+
+    <div class="section">
+      <h2>📞 Support</h2>
+      <p>For additional help or to report issues:</p>
+      <ul>
+        <li>Check the extension popup for status information</li>
+        <li>Review browser console for error messages</li>
+        <li>Ensure you have the latest version installed</li>
+      </ul>
+    </div>
+  </div>
+</body>
+
+</html>

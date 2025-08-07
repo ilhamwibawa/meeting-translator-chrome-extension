@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "Meeting Video to Text",
+  "version": "1.0.0",
+  "description": "Converts meeting video audio to real-time text transcription",
+  "permissions": ["activeTab", "storage", "tabCapture", "scripting"],
+  "host_permissions": [
+    "https://meet.google.com/*",
+    "https://zoom.us/*",
+    "https://*.zoom.us/*",
+    "https://teams.microsoft.com/*",
+    "https://*.teams.microsoft.com/*"
+  ],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://meet.google.com/*",
+        "https://zoom.us/*",
+        "https://*.zoom.us/*",
+        "https://teams.microsoft.com/*",
+        "https://*.teams.microsoft.com/*",
+        "file://*/*",
+        "http://localhost:*/*",
+        "https://localhost:*/*"
+      ],
+      "js": ["content/content.js"],
+      "css": ["ui/styles.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_title": "Meeting Video to Text",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["ui/*", "help.html"],
+      "matches": [
+        "https://meet.google.com/*",
+        "https://zoom.us/*",
+        "https://*.zoom.us/*",
+        "https://teams.microsoft.com/*",
+        "https://*.teams.microsoft.com/*",
+        "file://*/*",
+        "http://localhost:*/*",
+        "https://localhost:*/*"
+      ]
+    }
+  ]
+}

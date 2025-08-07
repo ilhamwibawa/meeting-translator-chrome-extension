@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Video to Text - Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-container {
+      margin: 20px 0;
+      padding: 20px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+
+    video {
+      width: 100%;
+      max-width: 640px;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .controls {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    button {
+      background: #4285f4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #3367d6;
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .instructions {
+      background: #e3f2fd;
+      padding: 20px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+
+    .console-output {
+      background: #1e1e1e;
+      color: #00ff00;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      height: 200px;
+      overflow-y: auto;
+      margin: 20px 0;
+    }
+
+    .platform-selector {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    select {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    .status {
+      background: #e8f5e8;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #4caf50;
+    }
+
+    .speech-indicator {
+      background: #ff9800;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-weight: bold;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🎥 Meeting Video to Text Extension - Test Page</h1>
+
+    <div class="status">
+      <h3>🚀 Extension Status</h3>
+      <p>Open Chrome Developer Console (F12) to see detailed logs from the extension.</p>
+      <p>The extension should automatically detect and process any video elements on this page.</p>
+    </div>
+
+    <div class="instructions">
+      <h3>📋 Testing Instructions</h3>
+      <ol>
+        <li><strong>Open Chrome DevTools</strong> (F12) and go to the Console tab</li>
+        <li><strong>Try "Generate Test Speech"</strong> - you should hear the computer speak</li>
+        <li><strong>Grant microphone permissions</strong> when prompted</li>
+        <li><strong>Look for transcription results</strong> in the console</li>
+        <li><strong>Expected log messages</strong>:
+          <ul>
+            <li>"Video detected on platform: generic"</li>
+            <li>"Audio extraction started"</li>
+            <li>"📝 Final Transcript: [recognized speech]"</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <div class="speech-indicator" id="speechIndicator">
+      🗣️ Computer is speaking - listen for transcription results!
+    </div>
+
+    <div class="platform-selector">
+      <label for="platform">Test Platform Mode:</label>
+      <select id="platform" onchange="updatePageUrl()">
+        <option value="generic">Generic Platform</option>
+        <option value="meet.google.com">Google Meet</option>
+        <option value="zoom.us">Zoom</option>
+        <option value="teams.microsoft.com">Microsoft Teams</option>
+      </select>
+    </div>
+
+    <div class="video-container">
+      <h3>📹 Test Video Source</h3>
+      <video id="testVideo" controls autoplay playsinline crossorigin="anonymous">
+        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          type="video/mp4">
+        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <p><small>📝 Note: Most online videos have CORS restrictions. For best testing, use the buttons below.</small></p>
+    </div>
+
+    <div class="controls">
+      <button onclick="startWebcamVideo()" id="webcamBtn">📷 Start Webcam Test</button>
+      <button onclick="startScreenShare()" id="screenBtn">🖥️ Start Screen Share Test</button>
+      <button onclick="createSpeechTest()" id="speechBtn">🗣️ Start Speech Test</button>
+      <button onclick="startSynthesizedSpeech()" id="synthBtn">🔊 Generate Test Speech</button>
+      <button onclick="stopAllStreams()" id="stopBtn">⏹️ Stop All</button>
+    </div>
+
+    <div class="console-output" id="consoleOutput">
+      <div>Extension console output will appear here...</div>
+      <div>Open Chrome DevTools Console for detailed logs.</div>
+    </div>
+  </div>
+
+  <script>
+    let currentStream = null;
+    let testAudioContext = null;
+    let speechUtterance = null;
+
+    // Override console.log to also display in our output area
+    const originalLog = console.log;
+    console.log = function (...args) {
+      originalLog.apply(console, args);
+
+      const output = document.getElementById('consoleOutput');
+      const timestamp = new Date().toLocaleTimeString();
+      const message = args.map(arg =>
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+
+      output.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+      output.scrollTop = output.scrollHeight;
+    };
+
+    function updatePageUrl() {
+      const platform = document.getElementById('platform').value;
+      if (platform !== 'generic') {
+        console.log(`🌐 Simulating platform: ${platform}`);
+        console.log('Extension should detect this as:', platform);
+      }
+    }
+
+    async function startWebcamVideo() {
+      try {
+        console.log('🎥 Requesting webcam access...');
+        console.log('⚠️ Please grant microphone permission for speech recognition to work!');
+
+        currentStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+
+        const video = document.getElementById('testVideo');
+        video.srcObject = currentStream;
+        video.muted = false;
+        video.play();
+
+        document.getElementById('webcamBtn').disabled = true;
+        console.log('✅ Webcam stream started - Extension should detect this video');
+        console.log('🎤 Now speak into your microphone to test speech recognition!');
+
+        // Add a visual indicator
+        const indicator = document.createElement('div');
+        indicator.innerHTML = '🎤 SPEAK NOW - Microphone is active!';
+        indicator.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #4CAF50; color: white; padding: 10px; border-radius: 5px; z-index: 9999; font-weight: bold;';
+        document.body.appendChild(indicator);
+
+      } catch (error) {
+        console.error('❌ Error accessing webcam:', error);
+        alert('Could not access webcam. Please grant permissions and try again.');
+      }
+    }
+
+    async function startScreenShare() {
+      try {
+        console.log('🖥️ Requesting screen share access...');
+        currentStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: true
+        });
+
+        const video = document.getElementById('testVideo');
+        video.srcObject = currentStream;
+        video.muted = false;
+
+        document.getElementById('screenBtn').disabled = true;
+        console.log('✅ Screen share started - Extension should detect this video');
+
+      } catch (error) {
+        console.error('❌ Error accessing screen share:', error);
+        alert('Screen share cancelled or not supported.');
+      }
+    }
+
+    function createSpeechTest() {
+      console.log('🗣️ Creating speech test with microphone...');
+
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          console.log('🎤 Microphone access granted - speak now!');
+
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const source = audioContext.createMediaStreamSource(stream);
+          const analyser = audioContext.createAnalyser();
+          source.connect(analyser);
+
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+          const checkAudio = () => {
+            analyser.getByteFrequencyData(dataArray);
+            const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+            if (average > 10) {
+              console.log('🔊 Audio detected! Level:', Math.round(average));
+            }
+          };
+
+          const interval = setInterval(checkAudio, 500);
+
+          setTimeout(() => {
+            clearInterval(interval);
+            stream.getTracks().forEach(track => track.stop());
+            audioContext.close();
+            console.log('⏹️ Speech test ended');
+            document.getElementById('speechBtn').disabled = false;
+          }, 30000);
+
+          document.getElementById('speechBtn').disabled = true;
+          console.log('✅ Speech test started - speak into your microphone for 30 seconds');
+        })
+        .catch(error => {
+          console.error('❌ Could not access microphone:', error);
+          alert('Please grant microphone permissions for speech testing.');
+        });
+    }
+
+    async function startSynthesizedSpeech() {
+      try {
+        console.log('🔊 Starting synthesized speech test...');
+
+        // Check for speech synthesis support
+        if (!('speechSynthesis' in window)) {
+          console.error('❌ Speech synthesis not supported in this browser');
+          alert('Speech synthesis not supported in this browser');
+          return;
+        }
+
+        // Wait for voices to load
+        if (speechSynthesis.getVoices().length === 0) {
+          console.log('⏳ Waiting for voices to load...');
+          await new Promise(resolve => {
+            speechSynthesis.addEventListener('voiceschanged', resolve, { once: true });
+            setTimeout(resolve, 1000); // Fallback timeout
+          });
+        }
+
+        const voices = speechSynthesis.getVoices();
+        console.log('🎤 Available voices:', voices.length);
+
+        // Find a good English voice
+        const preferredVoice = voices.find(voice =>
+          voice.lang.startsWith('en') && voice.localService
+        ) || voices.find(voice =>
+          voice.lang.startsWith('en')
+        ) || voices[0];
+
+        if (preferredVoice) {
+          console.log('🎯 Using voice:', preferredVoice.name, 'Language:', preferredVoice.lang);
+        }
+
+        const testPhrases = [
+          "Hello, this is a test of the speech recognition system.",
+          "The quick brown fox jumps over the lazy dog.",
+          "Meeting video to text extension is working correctly.",
+          "Testing speech recognition with synthesized audio.",
+          "This demonstrates real-time transcription capabilities."
+        ];
+
+        let phraseIndex = 0;
+
+        const speakPhrase = () => {
+          if (phraseIndex >= testPhrases.length) {
+            console.log('✅ Synthesized speech test completed');
+            document.getElementById('synthBtn').disabled = false;
+            document.getElementById('speechIndicator').style.display = 'none';
+            return;
+          }
+
+          const utterance = new SpeechSynthesisUtterance(testPhrases[phraseIndex]);
+
+          // Configure utterance for better audio
+          if (preferredVoice) {
+            utterance.voice = preferredVoice;
+          }
+          utterance.rate = 0.7; // Slower for better recognition
+          utterance.volume = 1.0; // Maximum volume
+          utterance.pitch = 1.0;
+
+          utterance.onstart = () => {
+            console.log(`🗣️ Speaking: "${testPhrases[phraseIndex]}"`);
+            document.getElementById('speechIndicator').style.display = 'block';
+            document.getElementById('speechIndicator').textContent =
+              `🗣️ Speaking: "${testPhrases[phraseIndex]}"`;
+          };
+
+          utterance.onend = () => {
+            console.log(`✅ Finished speaking phrase ${phraseIndex + 1}`);
+            phraseIndex++;
+            setTimeout(speakPhrase, 1500); // Shorter wait between phrases
+          };
+
+          utterance.onerror = (event) => {
+            console.error('❌ Speech synthesis error:', event.error);
+            phraseIndex++;
+            setTimeout(speakPhrase, 1000);
+          };
+
+          // Store reference for stopping
+          speechUtterance = utterance;
+
+          // Speak the utterance
+          speechSynthesis.speak(utterance);
+        };
+
+        document.getElementById('synthBtn').disabled = true;
+        console.log('✅ Starting synthesized speech - you should hear audio and see transcription results!');
+        console.log('🔊 Make sure your computer volume is turned up!');
+
+        // Start speaking phrases
+        speakPhrase();
+
+      } catch (error) {
+        console.error('❌ Error with synthesized speech:', error);
+        document.getElementById('synthBtn').disabled = false;
+      }
+    }
+
+    function stopAllStreams() {
+      console.log('⏹️ Stopping all streams...');
+
+      // Stop speech synthesis
+      if (window.speechSynthesis) {
+        speechSynthesis.cancel();
+      }
+      speechUtterance = null;
+
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+
+      if (testAudioContext) {
+        testAudioContext.close();
+        testAudioContext = null;
+      }
+
+      const video = document.getElementById('testVideo');
+      video.srcObject = null;
+      video.load();
+
+      // Re-enable buttons
+      document.getElementById('webcamBtn').disabled = false;
+      document.getElementById('screenBtn').disabled = false;
+      document.getElementById('speechBtn').disabled = false;
+      document.getElementById('synthBtn').disabled = false;
+
+      // Hide indicators
+      document.getElementById('speechIndicator').style.display = 'none';
+      const indicators = document.querySelectorAll('[style*="position: fixed"]');
+      indicators.forEach(indicator => indicator.remove());
+
+      console.log('✅ All streams stopped');
+    }
+
+    // Simulate meeting platform indicators
+    function addMeetingIndicators() {
+      const indicator = document.createElement('div');
+      indicator.setAttribute('data-meeting-video', 'true');
+      indicator.setAttribute('data-allocation-index', '0');
+      indicator.style.display = 'none';
+      document.body.appendChild(indicator);
+
+      console.log('🏷️ Added meeting platform indicators');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🎬 Test page loaded');
+      console.log('Extension should initialize and start detecting videos...');
+      addMeetingIndicators();
+
+      const video = document.getElementById('testVideo');
+      video.setAttribute('data-meeting-video', 'true');
+      video.setAttribute('autoplay', 'true');
+
+      // Test speech synthesis availability
+      if ('speechSynthesis' in window) {
+        console.log('✅ Speech synthesis is available');
+        // Preload voices
+        speechSynthesis.getVoices();
+      } else {
+        console.log('❌ Speech synthesis not available');
+      }
+    });
+
+    // Monitor extension activity
+    setInterval(() => {
+      if (window.meetingVideoToTextExtension) {
+        console.log('📊 Extension detected and active');
+      }
+    }, 10000);
+
+    // Handle page visibility for speech synthesis
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && speechSynthesis.speaking) {
+        console.log('⏸️ Page hidden, pausing speech');
+      }
+    });
+  </script>
+</body>
+
+</html>
